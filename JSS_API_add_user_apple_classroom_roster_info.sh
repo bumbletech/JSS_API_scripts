@@ -43,7 +43,8 @@ do
   <roster_unique_identifier/>
   <roster_passcode_type/>
 </user>" > "/tmp/blank_location.xml"
-
+    
+    #do the put request
     curl -X PUT -H "Accept: application/xml" -H "Content-type: application/xml" -k -u ${jssUser}:${apiPassword} -T /tmp/blank_location.xml ${apiPath}/users/name/$username
     index=$[$index+1]
 done < $file
