@@ -32,9 +32,12 @@ INPUT="$file"
 OLDIFS=$IFS
 IFS=","
 [ ! -f $INPUT ] && { echo "$INPUT file not found"; exit 99; }
+#define the columns of the CSV (everthing after "while read" is a column
 while read username fullname email
 do
 
+
+#setup the data for the XML file for the PUT Request
     echo "<user>
   <roster_managed_apple_id></roster_managed_apple_id>
   <roster_name>$fullname</roster_name>
