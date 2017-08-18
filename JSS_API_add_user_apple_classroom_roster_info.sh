@@ -2,7 +2,7 @@
 
 # Unless your users are imported from Apple Classroom, the teacher's Classroom app
 # will default to displaying the username--not the most helpful.
-# This script let's up update that info with a CSV containing columns for
+# This script lets you up update that info with a CSV containing columns for
 # username, fullname, and email.
 
 #Edit this line for your JSS
@@ -20,20 +20,21 @@ read jssUser
 echo "Please enter your JSS password:"
 read -s apiPassword
 
-#Create counter index
+#Create counter index for going through the CSV line by line
 index="1"
 
-#Pull filename for CSV of names and attributes
+#Get the path for CSV of names and attributes
 echo "Please drag and drop your CSV into this window and press enter."
 read file
 
-#Loop to add attributes to names
+#Setup needed for parsing the CSV correctly
 INPUT="$file"
 OLDIFS=$IFS
 IFS=","
 [ ! -f $INPUT ] && { echo "$INPUT file not found"; exit 99; }
 #define the columns of the CSV (everthing after "while read" is a column
 while read username fullname email
+#loop through the CSV one line at a time
 do
 
 
@@ -50,10 +51,11 @@ do
     #do the put request
     curl -X PUT -H "Accept: application/xml" -H "Content-type: application/xml" -k -u ${jssUser}:${apiPassword} -T /tmp/blank_location.xml ${apiPath}/users/name/$username
     index=$[$index+1]
+#stop the loop
 done < $file
 
 #Clean up temp XML
-#rm /tmp/blank_location.xml
+rm /tmp/blank_location.xml
 
 echo ""
 echo "All lines complete!"
