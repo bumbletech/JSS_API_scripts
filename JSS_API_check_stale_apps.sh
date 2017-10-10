@@ -75,9 +75,9 @@ echo "This may take a while depending on the number of apps in your jss"
 echo "Checking apps... please wait..."
 
 #Write a CSV to the desktop with the stale apps
-write_app_csv > Desktop/jss_stale_apps.csv
+write_app_csv > ~/Desktop/jss_stale_apps.csv
 
 echo ""
 echo "All done!"
-echo "CSV is at Desktop/jss_stale_apps.csv"
+echo "CSV is at ~/Desktop/jss_stale_apps.csv"
 
