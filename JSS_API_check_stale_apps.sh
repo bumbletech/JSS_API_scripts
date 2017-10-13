@@ -37,7 +37,7 @@ curl -s -u $apiReadOnlyUser:"$apiReadOnlyPass" $JSSapiPath | xpath '//mobile_dev
 function write_app_csv () {
 
 #write csv header
-echo "jss_id,bundleid,jss_url"
+echo "jss_id,bundleid,jss_url,itunes_lastknown_url"
 
 #loop through each line of the XML out put so both the bundleID and the JSS app ID of an can be worked with
 INPUT="$xml_file"
@@ -63,7 +63,11 @@ do
   	#check if app's bundleID matches what's on the JSS. If it's blank, there's no record on the iTunes store.
   	if [[ $app_bundle_id != $bundleId ]]; then
   		jss_app_url="${JSSurl}/mobileDeviceApps.html?id=${id}&o=r&nav="
-  		echo "$id,$app_bundle_id,$jss_app_url" 
+  		#since there's no itunes results, grab the last known URL from the JSS.
+		itunes_lastknown_url_raw=`curl -s -u $apiReadOnlyUser:"$apiReadOnlyPass" $JSSapiPath/id/$id | xpath '//mobile_device_application/general/itunes_store_url' 2>&1 | awk -F'<itunes_store_url>|</itunes_store_url>' '{print $2}' | tail -n +3`
+  		#XML can't deal with "&". replace the escape text.
+		itunes_lastknown_url="${itunes_lastknown_url_raw/&amp;/&}"
+  		echo "$id,$app_bundle_id,$jss_app_url,$itunes_lastknown_url" 
   	fi
   	
 	index=$[$index+1]
@@ -80,4 +84,3 @@ write_app_csv > ~/Desktop/jss_stale_apps.csv
 echo ""
 echo "All done!"
 echo "CSV is at ~/Desktop/jss_stale_apps.csv"
-
