@@ -90,7 +90,7 @@ do
 		itunes_lastknown_url_raw=`curl -s -u $apiReadOnlyUser:"$apiReadOnlyPass" $JSSapiPath/id/$id | xpath '//mobile_device_application/general/itunes_store_url' 2>&1 | awk -F'<itunes_store_url>|</itunes_store_url>' '{print $2}' | tail -n +3`
   		#XML can't deal with "&". replace the escape text.
 		itunes_lastknown_url="${itunes_lastknown_url_raw/&amp;/&}"
-  		echo "NOT_32BIT,$id,$app_bundle_id,$jss_app_url,$itunes_lastknown_url"
+  		echo "32BIT_ONLY,$id,$app_bundle_id,$jss_app_url,$itunes_lastknown_url"
   	fi
   	
   	rm $itunes_data
