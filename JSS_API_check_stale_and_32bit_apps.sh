@@ -35,7 +35,7 @@ JSSapiPath="${JSSurl}/JSSResource/mobiledeviceapplications"
 xml_file=/tmp/jss_apps.xml
 
 #get list of bundleIDs for JSS apps
-curl -s -u $apiReadOnlyUser:"$apiReadOnlyPass" $JSSapiPath | xpath '//mobile_device_applications/mobile_device_application' 2>&1 | awk -F'<mobile_device_application>|</mobile_device_application>' '{print $2}' | tail -n +3 > $xml_file
+curl -s -k -u $apiReadOnlyUser:"$apiReadOnlyPass" $JSSapiPath | xpath '//mobile_device_applications/mobile_device_application' 2>&1 | awk -F'<mobile_device_application>|</mobile_device_application>' '{print $2}' | tail -n +3 > $xml_file
 
 function write_app_csv () {
 
@@ -54,7 +54,7 @@ do
 	id=`echo "$xml_string" | awk -F'<id>|</id>' '{print $2}'`
 	app_bundle_id=`echo "$xml_string" | awk -F'<bundle_id>|</bundle_id>' '{print $2}'`
 	#since there's no itunes results, grab the last known URL from the JSS.
-	itunes_lastknown_url_raw=`curl -s -u $apiReadOnlyUser:"$apiReadOnlyPass" $JSSapiPath/id/$id | xpath '//mobile_device_application/general/itunes_store_url' 2>&1 | awk -F'<itunes_store_url>|</itunes_store_url>' '{print $2}' | tail -n +3`
+	itunes_lastknown_url_raw=`curl -s -k -u $apiReadOnlyUser:"$apiReadOnlyPass" $JSSapiPath/id/$id | xpath '//mobile_device_application/general/itunes_store_url' 2>&1 | awk -F'<itunes_store_url>|</itunes_store_url>' '{print $2}' | tail -n +3`
 	#XML can't deal with "&". replace the escape text.
 	itunes_lastknown_url="${itunes_lastknown_url_raw/&amp;/&}"
 	itunesAdamId=`echo $itunes_lastknown_url | sed -e 's/.*\/id\(.*\)?.*/\1/'`
@@ -80,14 +80,14 @@ do
   	if [[ $app_bundle_id != $bundleId ]]; then
   		jss_app_url="${JSSurl}/mobileDeviceApps.html?id=${id}&o=r&nav="
   		#since there's no itunes results, grab the last known URL from the JSS.
-		itunes_lastknown_url_raw=`curl -s -u $apiReadOnlyUser:"$apiReadOnlyPass" $JSSapiPath/id/$id | xpath '//mobile_device_application/general/itunes_store_url' 2>&1 | awk -F'<itunes_store_url>|</itunes_store_url>' '{print $2}' | tail -n +3`
+		itunes_lastknown_url_raw=`curl -s -k -u $apiReadOnlyUser:"$apiReadOnlyPass" $JSSapiPath/id/$id | xpath '//mobile_device_application/general/itunes_store_url' 2>&1 | awk -F'<itunes_store_url>|</itunes_store_url>' '{print $2}' | tail -n +3`
   		#XML can't deal with "&". replace the escape text.
 		itunes_lastknown_url="${itunes_lastknown_url_raw/&amp;/&}"
   		echo "NO_LONGER_AVAILABLE,$id,$app_bundle_id,$jss_app_url,$itunes_lastknown_url"
   	elif [[ $is32bitOnly == true ]]; then
   		jss_app_url="${JSSurl}/mobileDeviceApps.html?id=${id}&o=r&nav="
   		#since there's no itunes results, grab the last known URL from the JSS.
-		itunes_lastknown_url_raw=`curl -s -u $apiReadOnlyUser:"$apiReadOnlyPass" $JSSapiPath/id/$id | xpath '//mobile_device_application/general/itunes_store_url' 2>&1 | awk -F'<itunes_store_url>|</itunes_store_url>' '{print $2}' | tail -n +3`
+		itunes_lastknown_url_raw=`curl -s -k -u $apiReadOnlyUser:"$apiReadOnlyPass" $JSSapiPath/id/$id | xpath '//mobile_device_application/general/itunes_store_url' 2>&1 | awk -F'<itunes_store_url>|</itunes_store_url>' '{print $2}' | tail -n +3`
   		#XML can't deal with "&". replace the escape text.
 		itunes_lastknown_url="${itunes_lastknown_url_raw/&amp;/&}"
   		echo "32BIT_ONLY,$id,$app_bundle_id,$jss_app_url,$itunes_lastknown_url"
@@ -109,3 +109,4 @@ write_app_csv > ~/Desktop/jss_stale_apps.csv
 echo ""
 echo "All done!"
 echo "CSV is at ~/Desktop/jss_stale_apps.csv"
+
