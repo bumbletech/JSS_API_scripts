@@ -35,7 +35,7 @@ JSSapiPath="${JSSurl}/JSSResource/mobiledeviceapplications"
 xml_file=/tmp/jss_apps.xml
 
 #get list of bundleIDs for JSS apps
-curl -s -k -u $apiReadOnlyUser:"$apiReadOnlyPass" $JSSapiPath | xpath '//mobile_device_applications/mobile_device_application' 2>&1 | awk -F'<mobile_device_application>|</mobile_device_application>' '{print $2}' | tail -n +3 > $xml_file
+curl -s -k -H "Accept: application/xml" -H "Content-type: application/xml" -u $apiReadOnlyUser:"$apiReadOnlyPass" $JSSapiPath | xpath '//mobile_device_applications/mobile_device_application' 2>&1 | awk -F'<mobile_device_application>|</mobile_device_application>' '{print $2}' | tail -n +3 > $xml_file
 
 function write_app_csv () {
 
@@ -77,7 +77,10 @@ do
 # 	echo "32Bit - $is32bitOnly"
   
   	#check if app's bundleID matches what's on the JSS. If it's blank, there's no record on the iTunes store.
-  	if [[ $app_bundle_id != $bundleId ]]; then
+  	if [[ $id = "" ]]; then
+  		#do nothing. This is just a blank line in the data parsed from the jss
+  		sleep .1
+  	elif [[ $app_bundle_id != $bundleId ]]; then
   		jss_app_url="${JSSurl}/mobileDeviceApps.html?id=${id}&o=r&nav="
   		#since there's no itunes results, grab the last known URL from the JSS.
 		itunes_lastknown_url_raw=`curl -s -k -u $apiReadOnlyUser:"$apiReadOnlyPass" $JSSapiPath/id/$id | xpath '//mobile_device_application/general/itunes_store_url' 2>&1 | awk -F'<itunes_store_url>|</itunes_store_url>' '{print $2}' | tail -n +3`
