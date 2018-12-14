@@ -11,7 +11,7 @@ apiReadOnlyPass='pass'
 ###############################################
 
 #check to see if variables have been changed
-if [ "$JSSurl" == "https://yourjss:8443" ] || [ "$apiReadOnlyUser" == "user" ] || [ "$apiReadOnlyPass" == "pass" ]; then
+if [ "$JSSurl" == "https://YOUR.JSS:8443" ] || [ "$apiReadOnlyUser" == "user" ] || [ "$apiReadOnlyPass" == "pass" ]; then
 	echo "One of the variables needed for your JSS and accounts is set to the default. Open this script in a text editor and check the variables for JSSurl, apiReadOnlyUser & apiReadOnlyPass and try again."
 	echo "Exiting..."
 	exit 1
